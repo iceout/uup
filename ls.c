@@ -72,14 +72,23 @@ void do_ls(char dirname[])
 {
     DIR *dir_ptr;
     struct dirent *direntp;
+    char pathtofile[300] = "";
+    char tmp[350];
 
     if ((dir_ptr = opendir(dirname)) == NULL)  {
         fprintf(stderr, "ls: cannot open %s\n", dirname);
     }
     else {
+        printf("%s\n", dirname);
+        strcat(pathtofile, dirname);
+        strcat(pathtofile, "/");
+        printf("path == %s\n", pathtofile);
         if (lsl == 1) {
             while ((direntp = readdir(dir_ptr)) != NULL) {
-                dostat(direntp->d_name);
+                tmp[0] = '\0';
+                strcat(tmp, pathtofile);
+                strcat(tmp, direntp->d_name);
+                dostat(tmp);
             }
         }
         else {
@@ -110,7 +119,7 @@ void show_file_info(char *fname, struct stat *info)
     printf(" %4d", (int)info->st_nlink);
 	printf(" %-6s" , uid_to_name(info->st_uid) );
 	printf(" %-6s" , gid_to_name(info->st_gid) );
-	printf(" %4ld" , (long)info->st_size);
+	printf(" %8ld" , (long)info->st_size);
     printf(" %.12s", 4+ctime(&info->st_mtime));
     printf(" %s\n", fname);
 }
